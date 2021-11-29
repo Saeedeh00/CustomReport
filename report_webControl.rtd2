@@ -1,0 +1,138 @@
+{
+	"id": "report_webControl",
+	"name": "Web Control",
+	"Date": "2021-11-28 11:30:00",
+	"templateVersion": 2,
+	"categoryName": "webControl",
+	"from": "reports LEFT OUTER JOIN clients ON reports.clientID = clients.id LEFT OUTER JOIN groups ON clients.groupId = groups.id ",
+	"defaultWhere": "reports.type = 12",
+	"fields": [
+			{ "caption": "Report Time Computer Name", "fieldName": "reportComputerName", "sql": "reports.clientName || CASE WHEN clients.id IS NULL THEN ' (deleted)' ELSE '' END", "type": "string" },
+			{ "caption": "Report Time", "fieldName": "reports.date", "type": "unixTime" },
+			{ "caption": "Report Received Time", "fieldName": "reports.receivedTime", "type": "unixTime" },
+			{ "caption": "Report Received Time Delta (seconds)", "fieldName": "receivedTimeDelta", "sql": "reports.receivedTime - reports.date", "type": "integer" },
+			{ "caption": "Report Time Console User Name", "fieldName": "reports.consoleUsername", "type": "string" },
+			{ "caption": "Report Time Mac Address", "fieldName": "reports.primaryMacAddress", "type": "string" },
+			{ "caption": "Report Time HDD Serial", "fieldName": "reports.hddSerial", "type": "string" },
+			{ "caption": "Report Time IP Address", "fieldName": "reports.primaryIP", "sql": "", "type": "string" },
+
+			
+			{ "caption": "Current Group Name", "fieldName": "groups.name", "type": "string" },
+			{ "caption": "Current Group Path", "fieldName": "currentGroupPath", "sql": "getGroupPath(groups.id)", "type": "string" },
+			{ "caption": "Current Client Description", "fieldName": "clients.description", "type": "string" },
+			{ "caption": "Current IP Address", "fieldName": "lastIpAddress", "sql": "remoteAddress(clients.lastIpAddress, -1)", "type": "string" },
+			{ "caption": "Current User Name", "fieldName": "clients.userName", "type": "string" },
+			{ "caption": "Last Update", "fieldName": "lastUpdateDate", "sql": "case when clients.dbTimestamp!=0 then clients.dbTimestamp else null end", "type": "unixTime" },
+			{ "caption": "Last Seen", "fieldName": "lastSeen", "sql": "case when clients.lastSeen!=0 then clients.lastSeen else null end", "type": "unixTime" },
+			{ "caption": "Last Alert Date", "fieldName": "lastAlertDate", "sql": "case when clients.lastAlertDate!=0 then clients.lastAlertDate else null end", "type": "unixTime" },
+			{ "caption": "Current Client ID", "fieldName": "clientId", "sql": "clients.id", "type": "integer" },
+			{ "caption": "Current OS Name", "fieldName": "clients.osName", "type": "string" },
+			{ "caption": "Current OS Build", "fieldName": "osBuild", "sql": "clients.osName || ' ' || getBuildNumber(clients.osBuild)", "type": "string" },
+			{ "caption": "Current Computer Status", "fieldName": "clients.computer_status", "type": "string" },
+			{ "caption": "Current Computer Status Reason", "fieldName": "clients.computer_status_reason", "type": "string" },
+			{ "caption": "Current Product Type", "fieldName": "clientType", "sql": "GetProductName(clients.type)",  "type": "string" },
+			{ "caption": "Current Product Version", "fieldName": "productVersion", "sql": "(clients.prodVer1 \/ 65536) || '.' || (clients.prodVer1 % 65536) || '.' || (clients.prodVer2 \/ 65536) || '.' || (clients.prodVer2 % 65536)", "type": "string" },
+			{ "caption": "Current System Guard Status", "fieldName": "hasSystemGuard", "sql": "(clients.guardsActive & 4  ) >> 2", "type": "enum.onoff" },
+			{ "caption": "Current Firewall Status", "fieldName": "hasFirewall", "sql": "(clients.guardsActive & 8  ) >> 3", "type": "enum.onoff" },
+			{ "caption": "Current Device Control Status", "fieldName": "hasDeviceControl", "sql": "(clients.guardsActive & 16  ) >> 4", "type": "enum.onoff" },
+			{ "caption": "Current Tamper Protection Status", "fieldName": "hasTamperProtection", "sql": "(clients.guardsActive & 32  ) >> 5", "type": "enum.onoff" },
+			{ "caption": "Current Self Protection Status", "fieldName": "hasSelfProtection", "sql": "(clients.guardsActive & 64  ) >> 6", "type": "enum.onoff" },
+			{ "caption": "Current DataCop Status", "fieldName": "hasDataCop", "sql": "(clients.guardsActive & 128  ) >> 7", "type": "enum.onoff" },
+			{ "caption": "Current MBR Status", "fieldName": "hasMbr", "sql": "(clients.guardsActive & 256  ) >> 8", "type": "enum.onoff" },
+			{ "caption": "Current Bait Status", "fieldName": "hasBait", "sql": "(clients.guardsActive & 512  ) >> 9", "type": "enum.onoff" },
+			{ "caption": "Current DataCop Protection Status", "fieldName": "hasDcp", "sql": "(clients.guardsActive & 1024  ) >> 10", "type": "enum.onoff" },
+			{ "caption": "Current Total Scanned Files", "fieldName": "clients.totalScannedFiles", "type": "integer" },
+			{ "caption": "Current Total Malwares Found", "fieldName": "clients.totalMalwaresFound", "type": "integer" },
+			{ "caption": "Current Database Version", "fieldName": "dbTimestamp", "sql": "NULLIF(clients.dbTimestamp  , 0)", "type": "unixTime" },
+			{ "caption": "Last Full Scan Date", "fieldName": "lastFullScan", "sql": "NULLIF(clients.lastFullScan  , 0)", "type": "unixTime" },
+			{ "caption": "Last Full Scan (Days Ago)", "fieldName": "scanDaysAgo", "sql": "case when lastFullScan != 0 then (select strftime('%s', 'now') - clients.lastFullScan)/86400 else null end", "type": "integer" },
+			{ "caption": "Database Version (Days Ago)", "fieldName": "updateDaysAgo", "sql": "case when clients.dbTimestamp != 0 then (strftime('%s', 'now') - clients.dbTimestamp)/86400 else null end", "type": "integer" },
+			{ "caption": "Current OS X64 State", "fieldName": "clients.x64OS", "type": "enum.yesno" },
+			{ "caption": "Current Processor Information", "fieldName": "clients.ProcessorInfo", "type": "string" },
+			{ "caption": "Current OS Virtualized State", "fieldName": "clients.InsideVMWare", "type": "enum.yesno" },
+			{ "caption": "Current Installed RAM", "fieldName": "clients.TotalphysicalMemory", "type": "integer" },
+			{ "caption": "Current System Type", "fieldName": "clients.systemType", "type": "string" },
+			{ "caption": "Last Backup Date", "fieldName": "lastbackup", "sql": "case when clients.lastbackup != '' then clients.lastbackup + TimeWithCurrentFormat(clients.lastbackupTime) else clients.lastbackup end", "type": "string" },
+			{ "caption": "Current Stale Drives", "fieldName": "clients.staleDrive", "type": "string" },
+			{ "caption": "Last Malware Action", "fieldName": "clients.lastMalwareAction", "type": "enum.malwareAction" },
+			{ "caption": "Current On Battery Status", "fieldName": "clients.onBattery", "type": "enum.yesno" },
+			{ "caption": "Client Registered Date", "fieldName": "clients.clientRegisteredDate", "type": "unixTime" },
+			{ "caption": "Current Gateway IP Address", "fieldName": "gatewayIPAddress", "sql": "remoteAddress(clients.gatewayIPAddress, -1)", "type": "string" },
+		    { "caption": "Current MAC Address", "fieldName": "clients.lastMacAddress", "sql": "formatBinData(clients.lastMacAddress)", "type": "string" },
+			{ "caption": "Current Gateway MAC Address", "fieldName": "clients.gatewayMacAddress", "sql": "formatBinData(clients.gatewayMacAddress)", "type": "string" },
+			{ "caption": "Current System Drive Free Space", "fieldName": "clients.systemDriveFreeSpace", "type": "integer" },
+			{ "caption": "Current System Drive Total Space", "fieldName": "clients.systemDriveTotalSpace", "type": "integer" },
+			{ "caption": "Current Main HDD Size", "fieldName": "clients.mainHddSize", "type": "integer" },
+			{ "caption": "Is Connected", "fieldName": "isConnected", "type": "enum.yesno" },
+			{ "caption": "Config Timestamp", "fieldName": "clients.configTimestamp", "type": "unixTime" },
+			{ "caption": "Full Computer Name", "fieldName": "clients.fullComputerName", "type": "string" },
+			{ "caption": "Motherboard Name", "fieldName": "clients.motherboardName", "type": "string" },
+			{ "caption": "Other IPs", "fieldName": "clients.otherIPs", "type": "string" },
+			{ "caption": "Primary IPv4 Address", "fieldName": "clients.primaryAddress", "type": "string" },
+			{ "caption": "Domain Name", "fieldName": "domainName", "sql": "(SELECT domainName FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "Security Identifier", "fieldName": "SID", "sql": "(SELECT SID FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "Active Directory Description", "fieldName": "description", "sql": "(SELECT description FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "Office", "fieldName": "office", "sql": "(SELECT office FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "Display Name", "fieldName": "displayName", "sql": "(SELECT displayName FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "Telephone", "fieldName": "telephone", "sql": "(SELECT telephone FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "Mobile", "fieldName": "mobile", "sql": "(SELECT mobile FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "Email", "fieldName": "email", "sql": "(SELECT email FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "Organization Unit", "fieldName": "ou", "sql": "(SELECT ou FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+            { "caption": "User Logon Name", "fieldName": "userLogonNameWithoutAt", "sql": "(SELECT userLogonNameWithoutAt FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" },
+			{ "caption": "User Logon Name (Pre-Win2000)", "fieldName": "userLogonNamePreWin2000", "sql": "(SELECT userLogonNamePreWin2000 FROM ActiveDirectory_UsersInfo WHERE ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNameWithoutAt) LIKE clients.userName) OR ((ActiveDirectory_UsersInfo.domainName || '\\' || ActiveDirectory_UsersInfo.userLogonNamePreWin2000) LIKE clients.userName) LIMIT 1)", "type": "string" }
+
+			],
+	"default": [
+		{
+			"name":"Most visited Sites",
+			"description":"Shows the detail and summary of most visited sites",
+			"detail": [
+				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
+				{ "caption": "Report Received Time", "fieldRef": "reports.receivedTime" },
+				{ "caption": "Current Group Name", "fieldRef": "groups.name" },
+				{ "caption": "Current OS Name", "fieldRef": "clients.osName" },
+				{ "caption": "Detection", "fieldRef": "reports.w1"}
+			],
+			"summary": [
+				{ "caption": "Number of Blocked sites", "function": "countStar", "sort": "desc" },
+				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
+			],
+			"chart":{
+			  "title":"Most visited sites",
+			  "type":"pie",
+			  "seriesList":[
+				"Number of Blocked sites"
+			  ]
+			},
+			"dateDefault": 90
+		},
+		{
+			"name":"The most visited sites",
+			"description":"Shows the detail and summary of most blocked sites by Web Control",
+			"detail": [
+				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
+				{ "caption": "Report Received Time", "fieldRef": "reports.receivedTime" },
+				{ "caption": "Current Group Name", "fieldRef": "groups.name" },
+				{ "caption": "Current OS Name", "fieldRef": "clients.osName" },
+				{ "caption": "Detection", "fieldRef": "reports.w1"}
+			],
+			"summary": [
+				{ "caption": "Number of Blocked IP", "function": "countStar", "sort": "desc" },
+				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
+			],
+			"chart":{
+			  "title":"Most Blocked Sites",
+			  "type":"pie",
+			  "seriesList":[
+				"Number of Blocked sites"
+			  ]
+			},
+			"dateDefault": 90
+		}
+	],
+    "filter":
+	{
+		"clientIdField": "clients.id",
+		"dateField":     "reports.date"
+    }
+ }
