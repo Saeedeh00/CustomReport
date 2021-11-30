@@ -19,6 +19,16 @@
 			
 			{ "caption": "Current Group Name", "fieldName": "groups.name", "type": "string" },
 			{ "caption": "Current Group Path", "fieldName": "currentGroupPath", "sql": "getGroupPath(groups.id)", "type": "string" },
+			
+			{ "caption": "Detection Name", "fieldName": "reports.w1", "type": "string" },
+			{ "caption": "Action", "fieldName": "reports.i5", "type": "enum",  "typeData":
+			[{"value":2, "desc":"Log"}, {"value":1, "desc":"Block"}] 
+			},
+			{ "caption": "Host Name", "fieldName": "reports.w2", "type": "string" },
+			{ "caption": "Remote Address", "fieldName": "remoteAddress", "sql": "remoteAddress(reports.i1, ntohs(reports.i2))", "type": "string" },
+		
+			{ "caption": "Protocol", "fieldName": "protocol", "sql": "CASE reports.i3 WHEN 0 THEN 'TCP'  WHEN 1 THEN 'UDP' ELSE reports.i3 END || CASE reports.i4 WHEN 1 THEN ':DNS' WHEN 2 THEN ':HTTP' WHEN 4 THEN ':SSL' ELSE reports.i4 END", "type": "string" },			
+			
 			{ "caption": "Current Client Description", "fieldName": "clients.description", "type": "string" },
 			{ "caption": "Current IP Address", "fieldName": "lastIpAddress", "sql": "remoteAddress(clients.lastIpAddress, -1)", "type": "string" },
 			{ "caption": "Current User Name", "fieldName": "clients.userName", "type": "string" },
@@ -89,9 +99,11 @@
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Received Time", "fieldRef": "reports.receivedTime" },
-				{ "caption": "Current Group Name", "fieldRef": "groups.name" },
-				{ "caption": "Current OS Name", "fieldRef": "clients.osName" },
-				{ "caption": "Detection", "fieldRef": "reports.w1"}
+				{ "caption": "Protocol", "fieldRef": "protocol"},
+				{ "caption": "Action", "fieldRef":"reports.i5"},
+				{ "caption": "Host Name", "fieldRef": "reports.w2"},
+				{ "caption": "Remote Address", "fieldRef": "remoteAddress"},
+				{ "caption": "Detection Name", "fieldRef": "reports.w1"}				
 			],
 			"summary": [
 				{ "caption": "Number of Blocked sites", "function": "countStar", "sort": "desc" },
@@ -101,23 +113,23 @@
 			  "title":"Most visited sites",
 			  "type":"pie",
 			  "seriesList":[
-				"Number of Blocked sites"
+				"Number of Visited sites"
 			  ]
 			},
 			"dateDefault": 90
 		},
 		{
-			"name":"The most visited sites",
+			"name":"Most Blocked Sites",
 			"description":"Shows the detail and summary of most blocked sites by Web Control",
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Received Time", "fieldRef": "reports.receivedTime" },
-				{ "caption": "Current Group Name", "fieldRef": "groups.name" },
-				{ "caption": "Current OS Name", "fieldRef": "clients.osName" },
-				{ "caption": "Detection", "fieldRef": "reports.w1"}
+				{ "caption": "Action", "fieldRef": "reports.i5", "filter": { "type": "exact", "value": 1 } },
+				{ "caption": "Host Name", "fieldRef": "reports.w2"},
+				{ "caption": "Remote Address", "fieldRef": "remoteAddress"}
 			],
 			"summary": [
-				{ "caption": "Number of Blocked IP", "function": "countStar", "sort": "desc" },
+				{ "caption": "Number of Blocked Sites", "function": "countStar", "sort": "desc" },
 				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
 			],
 			"chart":{
