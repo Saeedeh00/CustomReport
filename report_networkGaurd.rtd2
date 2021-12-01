@@ -1,9 +1,9 @@
 {
-	"id": "report_firewall",
-	"name": "Firewall Detection",
+	"id": "report_networkGuard",
+	"name": "Firewall",
 	"Date": "2021-11-28 11:30:00",
 	"templateVersion": 2,
-	"categoryName": "firewall",
+	"categoryName": "networkGuard",
 	"from": "reports LEFT OUTER JOIN clients ON reports.clientID = clients.id LEFT OUTER JOIN groups ON clients.groupId = groups.id ",
 	"defaultWhere": "reports.type = 4",
 	"fields": [
@@ -16,6 +16,21 @@
 			{ "caption": "Report Time HDD Serial", "fieldName": "reports.hddSerial", "type": "string" },
 			{ "caption": "Report Time IP Address", "fieldName": "reports.primaryIP", "sql": "", "type": "string" },
 
+			{ "caption": "Application Name", "fieldName": "appName", "sql": "getFileName(reports.w1)", "type":"string"},
+			{ "caption": "Application Path", "fieldName": "appPath", "sql": "CASE WHEN ifnull((reports.w1), '') = '' THEN '-' ELSE getFilePath(reports.w1) end", "type":"string"},
+			{ "caption": "Application User", "fieldName": "appUser", "sql": "case when ifnull(reports.w2, '') = '' then '-' else reports.w2 end", "type":"string"},
+
+			{ "caption": "Local Port", "fieldName": "localPort", "sql": "formatPortProtocol(reports.i2, reports.i1)", "type": "string" },
+			{ "caption": "Remote Address", "fieldName": "remoteAddress", "sql": "remoteAddress(reports.i3, CASE WHEN reports.i1 = 1 THEN -1 ELSE ntohs(reports.i4) END)", "type": "string" },
+			{ "caption": "Direction", "fieldName": "reports.i5", "sql": "", "type": "enum" ,  "typeData":
+			[{"value":2, "desc":"Outgoing"}, {"value":1, "desc":"Incoming"}] 
+			},
+			{ "caption": "Action", "fieldName": "reports.i6", "sql": "", "type": "enum" ,  "typeData":
+			[{"value":2, "desc":"Block & Ask"}, {"value":1, "desc":"Allowed"}, {"value":1, "desc":"Blocked"}] 
+			},
+			{ "caption": "Protocol", "fieldName": "reports.i1", "sql": "", "type": "enum" ,  "typeData":
+			[{"value":6, "desc":"TCP"}, {"value":17, "desc":"UDP"}, {"value":1, "desc":"ICMP"}] 
+			},
 			
 			{ "caption": "Current Group Name", "fieldName": "groups.name", "type": "string" },
 			{ "caption": "Current Group Path", "fieldName": "currentGroupPath", "sql": "getGroupPath(groups.id)", "type": "string" },
@@ -89,9 +104,10 @@
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Received Time", "fieldRef": "reports.receivedTime" },
-				{ "caption": "Current Group Name", "fieldRef": "groups.name" },
-				{ "caption": "Current OS Name", "fieldRef": "clients.osName" },
-				{ "caption": "Detection", "fieldRef": "reports.w1"}
+				{ "caption": "Action", "fieldRef": "reports.i6", "filter": { "type": "exact", "value": 1 } },
+				{ "caption": "Remote Address", "fieldRef": "remoteAddress" },
+				{ "caption": "Direction", "fieldRef": "reports.i5" },
+				{ "caption": "Local Port", "fieldRef": "localPort"}
 			],
 			"summary": [
 				{ "caption": "Number of Blocked IP", "function": "countStar", "sort": "desc" },
@@ -112,16 +128,17 @@
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Received Time", "fieldRef": "reports.receivedTime" },
-				{ "caption": "Current Group Name", "fieldRef": "groups.name" },
-				{ "caption": "Current OS Name", "fieldRef": "clients.osName" },
-				{ "caption": "Detection", "fieldRef": "reports.w1"}
+				{ "caption": "Action", "fieldRef": "reports.i6", "filter": { "type": "exact", "value": 1 } },
+				{ "caption": "Application Name", "fieldRef": "appName"},
+				{ "caption": "Application Path", "fieldRef": "appPath"},
+				{ "caption": "Application User", "fieldRef": "appUser"}
 			],
 			"summary": [
-				{ "caption": "Number of Blocked IP", "function": "countStar", "sort": "desc" },
+				{ "caption": "Number of Blocked Application", "function": "countStar", "sort": "desc" },
 				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
 			],
 			"chart":{
-			  "title":"Attack Distribution",
+			  "title":"Firewall Blocked",
 			  "type":"pie",
 			  "seriesList":[
 				"Number of Blocked Application"
