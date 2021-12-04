@@ -22,6 +22,8 @@
 			
 			{ "caption": "Current Group Name", "fieldName": "groups.name", "type": "string" },
 			{ "caption": "Current Group Path", "fieldName": "currentGroupPath", "sql": "getGroupPath(groups.id)", "type": "string" },
+			
+			{ "caption": "Computer Name", "fieldName": "clients.computerName", "type": "string" },
 			{ "caption": "Current Client Description", "fieldName": "clients.description", "type": "string" },
 			{ "caption": "Current IP Address", "fieldName": "lastIpAddress", "sql": "remoteAddress(clients.lastIpAddress, -1)", "type": "string" },
 			{ "caption": "Current User Name", "fieldName": "clients.userName", "type": "string" },
@@ -90,36 +92,39 @@
 			"name":"The Client With Most UMP Report",
 			"description":"Shows the detail and summary of most client with most UMP report",
 			"detail": [
-				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
-				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
-				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
-				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" }
+				{ "caption": "Computer Name", "fieldRef": "clients.computerName", "sort": "asc"},
+				{ "caption": "Group Name", "fieldRef": "groups.name"},
+				{ "caption": "Last IP Address", "fieldRef": "lastIpAddress"},
+				{ "caption": "Last Blocked Application", "fieldRef": "reports.w3", "filter": { "type": "contain", "value": "I:\" }}
 			],
-			"summary": [
-				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
+			"summary": [				
+				{  "caption": "Last IP Address", "fieldRef": "lastIpAddress", "function": "groupby"},
+				{ "caption": "Number of clients", "detailFieldRef": "clients.computerName", "function": "countDistinct", "sort": "desc" }
 				
 			],
 			"chart" : {
-				"title" : "Involved Clients",
+				"title" : "Involved Clients (UMP)",
 				"type" : "pie",
-				"seriesList" : ["Count"],
+				"seriesList" : ["clients.computerName"],
 			}
 		},
 		{
 			"name":"The Client With Most Blocked Application",
-			"description":"Shows the detail and summary of most client with most blocked application",
+			"description":"Shows the detail and summary client with most blocked application",
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
-				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
-				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
+				{ "caption": "Computer Name", "fieldRef": "clients.computerName", "sort": "asc"},
+				{ "caption": "Group Name", "fieldRef": "groups.name"},
+				{ "caption": "Last IP Address", "fieldRef": "lastIpAddress"},
 				{ "caption": "Blocked Application", "fieldRef": "reports.w3"},
 				{ "caption": "Application User", "fieldRef": "reports.w1"},
 				{ "caption": "Application Path", "fieldRef": "reports.w2"}
 				
 			],
 			"summary": [
-				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
+				{  "caption": "Last IP Address", "fieldRef": "lastIpAddress", "function": "groupby"},
+				{ "caption": "Number of Blocked clients", "detailFieldRef": "clients.computerName", "function": "countDistinct", "sort": "desc" }
 				
 			],
 			"chart" : {
@@ -130,46 +135,53 @@
 			}
 		},
 		{
-			"name":"Most Reported UMP Application",
-			"description":"Shows the detail and summary of most reported UMP application",
+			"name":" Most Blocked UMP Application",
+			"description":"Shows the detail and summary of most reported UMP applications",
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
-				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" }
+				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
+				{ "caption": "Blocked Application", "fieldRef": "reports.w3", "filter": { "type": "contain", "value": "I:\" }},
+				{ "caption": "Application User", "fieldRef": "reports.w1"},
+				{ "caption": "Application Path", "fieldRef": "reports.w2"}
+				
 			],
 			"summary": [
 				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
+				{ "caption": "Blocked Application", "detailFieldRef": "reports.w3", "function": "groupby"},
+				{ "caption": "Blocked Times", "function": "countStar", "sort": "desc" }
 				
 			],
 			"chart" : {
-				"title" : "UMP Application",
-				"type" : "pie",
-				"seriesList" : ["Count"],
+				"title": "Blocked Times",
+				"type": "pie",
+				"seriesList": [ "Blocked Times" ]
 			}
 		},
 		{
 			"name":"Most Blocked Application",
-			"description":"Shows the detail and summary of most blocked sites by Application Control",
+			"description":"Shows the detail and summary of most blocked Application by Application Control",
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
-				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" }
+				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
+				{ "caption": "Blocked Application", "fieldRef": "reports.w3"},
+				{ "caption": "Application User", "fieldRef": "reports.w1"},
+				{ "caption": "Application Path", "fieldRef": "reports.w2"}
 			],
 			"summary": [
-				{ "caption": "Number of Blocked Application", "function": "countStar", "sort": "desc" },
-				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
+				{ "caption": "Blocked Application", "detailFieldRef": "reports.w3", "function": "groupby" },
+				{ "caption": "Client Count","function": "countStar", "sort": "desc" }
 			],
-			"chart":{
-			  "title":"Blocked Application",
-			  "type":"pie",
-			  "seriesList":[
-				"Number of Blocked App"
-			  ]
+	
+			"chart" : {
+				"title" : "Most Blocked Application",
+				"type" : "pie",
+				"seriesList" : ["Client Count"]
 			},
 			"dateDefault": 90
-			
 		}
 	],
     "filter":
