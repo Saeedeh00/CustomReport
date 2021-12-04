@@ -38,6 +38,7 @@
 			
 			
 			{ "caption": "Current Client Description", "fieldName": "clients.description", "type": "string" },
+			{ "caption": "Computer Name", "fieldName": "clients.computerName", "type": "string" },
 			{ "caption": "Current IP Address", "fieldName": "lastIpAddress", "sql": "remoteAddress(clients.lastIpAddress, -1)", "type": "string" },
 			{ "caption": "Current User Name", "fieldName": "clients.userName", "type": "string" },
 			{ "caption": "Last Update", "fieldName": "lastUpdateDate", "sql": "case when clients.dbTimestamp!=0 then clients.dbTimestamp else null end", "type": "unixTime" },
@@ -109,19 +110,21 @@
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
 				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
+				{ "caption": "Computer Name", "fieldRef": "clients.computerName", "sort": "asc"},
 				{ "caption": "User Action", "fieldRef": "userAction"}
 				
 			],
+			
 			"summary": [
-				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
+				{ "caption": "Last IP Address", "fieldRef": "lastIpAddress", "function": "groupby"},
+				{ "caption": "Client Count", "detailFieldRef": "clients.computerName", "function": "countDistinct", "sort": "desc" }
 				
 			],
 			"chart" : {
-				"seriesList" : [
-					"Client Count"
-				],
+
 				"title" : "Involved Clients",
-				"type" : "pie"
+				"type" : "pie",
+				"seriesList" : ["Count"]
 			}
 		},
 		{
@@ -133,18 +136,22 @@
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
 				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
 				{ "caption": "Event", "fieldRef": "event"},
+				{ "caption": "Target", "fieldRef": "target"},
+				{ "caption": "Target Type", "fieldRef": "targetType"}
 			],
 			"summary": [
-				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
-				
+				{ "caption": "Event Nmae", "detailFieldRef": "event", "function": "groupby" },
+				{ "caption": "Client Count","function": "countStar", "sort": "desc" }
 			],
 			"chart" : {
 				"seriesList" : [
-					"Detected Type"
+					"Type Count"
 				],
-				"title" : "Detected Type",
+				"title" : "Most Detected Type",
 				"type" : "pie"
 			}
+			
+			
 		},
 		{
 			"name":"Most Blocked Appllication",
@@ -161,17 +168,17 @@
 				{ "caption": "Target Type", "fieldRef": "targetType"}
 				
 			],
-			"summary": [
-				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
-				
+			
+				"summary": [
+				{ "caption": "Blocked Application", "detailFieldRef": "app", "function": "groupby" },
+				{ "caption": "Client Count","function": "countStar", "sort": "desc" }
 			],
+	
 			"chart" : {
-				"seriesList" : [
-					"Number of Blocked Application"
-				],
-				"title" : "Blocked Application",
-				"type" : "pie"
-			}
+				"title" : "Most Blocked Application",
+				"type" : "pie",
+				"seriesList" : ["Client Count"]
+			},
 		}
 	],
     "filter":
