@@ -16,6 +16,9 @@
 			{ "caption": "Report Time HDD Serial", "fieldName": "reports.hddSerial", "type": "string" },
 			{ "caption": "Report Time IP Address", "fieldName": "reports.primaryIP", "sql": "", "type": "string" },
 
+			{ "caption": "Application User", "fieldName": "reports.w1", "type": "string" },
+			{ "caption": "Application Path", "fieldName": "reports.w2", "type": "string" },
+			{ "caption": "Blocked Application", "fieldName": "reports.w3", "type": "string" },
 			
 			{ "caption": "Current Group Name", "fieldName": "groups.name", "type": "string" },
 			{ "caption": "Current Group Path", "fieldName": "currentGroupPath", "sql": "getGroupPath(groups.id)", "type": "string" },
@@ -97,11 +100,9 @@
 				
 			],
 			"chart" : {
-				"seriesList" : [
-					"Client Count"
-				],
 				"title" : "Involved Clients",
-				"type" : "pie"
+				"type" : "pie",
+				"seriesList" : ["Count"],
 			}
 		},
 		{
@@ -111,18 +112,21 @@
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
-				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" }
+				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
+				{ "caption": "Blocked Application", "fieldRef": "reports.w3"},
+				{ "caption": "Application User", "fieldRef": "reports.w1"},
+				{ "caption": "Application Path", "fieldRef": "reports.w2"}
+				
 			],
 			"summary": [
 				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
 				
 			],
 			"chart" : {
-				"seriesList" : [
-					"Client Count"
-				],
+
 				"title" : "Client With Most Blocked Application",
-				"type" : "pie"
+				"type" : "pie",
+				"seriesList" : ["Count"]
 			}
 		},
 		{
@@ -139,16 +143,14 @@
 				
 			],
 			"chart" : {
-				"seriesList" : [
-					"UMP Application"
-				],
 				"title" : "UMP Application",
-				"type" : "pie"
+				"type" : "pie",
+				"seriesList" : ["Count"],
 			}
 		},
 		{
 			"name":"Most Blocked Application",
-			"description":"Shows the detail and summary of most blocked sites by Anticrypto",
+			"description":"Shows the detail and summary of most blocked sites by Application Control",
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
@@ -156,16 +158,18 @@
 				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" }
 			],
 			"summary": [
-				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
-				
+				{ "caption": "Number of Blocked Application", "function": "countStar", "sort": "desc" },
+				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
 			],
-			"chart" : {
-				"seriesList" : [
-					"Number of Blocked Application"
-				],
-				"title" : "Blocked Application",
-				"type" : "pie"
-			}
+			"chart":{
+			  "title":"Blocked Application",
+			  "type":"pie",
+			  "seriesList":[
+				"Number of Blocked App"
+			  ]
+			},
+			"dateDefault": 90
+			
 		}
 	],
     "filter":

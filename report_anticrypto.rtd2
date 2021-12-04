@@ -1,9 +1,9 @@
 {
-	"id": "report_attempt",
-	"name": "Anticrypto",
+	"id": "report_attempts",
+	"name": "AntiCrypto",
 	"Date": "2021-11-28 11:30:00",
 	"templateVersion": 2,
-	"categoryName": "attempt",
+	"categoryName": "attempts",
 	"from": "reports LEFT OUTER JOIN clients ON reports.clientID = clients.id LEFT OUTER JOIN groups ON clients.groupId = groups.id ",
 	"defaultWhere": "reports.type = 9",
 	"fields": [
@@ -19,6 +19,24 @@
 			
 			{ "caption": "Current Group Name", "fieldName": "groups.name", "type": "string" },
 			{ "caption": "Current Group Path", "fieldName": "currentGroupPath", "sql": "getGroupPath(groups.id)", "type": "string" },
+			
+			{ "caption": "Event", "fieldName": "event", "sql": "CASE reports.subtype WHEN 1 THEN 'Tamper Attempt' WHEN 2 THEN 'Backup Access' WHEN 3 THEN 'Stale Backup' WHEN 4 THEN 'Delete Backup' WHEN 6 THEN 'MBR Access' ELSE '---' END", "type": "string"
+			},
+			
+			{ "caption": "Application", "fieldName": "app", "sql": "CASE reports.subtype WHEN 1 THEN w2 WHEN 2 then w1 WHEN 3 THEN '---' WHEN 4 THEN w1 WHEN 6 THEN w2 ELSE '---' END ", "type": "string"},
+
+			
+			{ "caption": "Application User", "fieldName": "appUser", "sql": "reports.w5", "type":"string"},
+
+			{ "caption": "Pid", "fieldName": "pid", "sql": "CASE reports.subtype WHEN 1 then i1 WHEN 2 then i1 WHEN 3 then '---' WHEN 4 then i1	WHEN 6 then i1 ELSE '---' END", "type": "string"},
+
+			{ "caption": "Target", "fieldName": "target", "sql": "CASE reports.subtype WHEN 1 then w1 WHEN 2 then '---' WHEN 3 then w1 WHEN 4 then '---' WHEN 6 then w1 ELSE '---' END", "type": "string"},
+			
+			{ "caption": "Target Type", "fieldName": "targetType", "sql": "CASE reports.subtype WHEN 1 then w3 WHEN 2 then 'Backup' WHEN 3 then 'Drive List' WHEN 4 then 'Backup' WHEN 6 then 'MBR' ELSE '---' END", "type": "string"},
+			
+			{ "caption": "User Action", "fieldName": "userAction", "sql": "CASE reports.i5 WHEN 32 then 'Log only' WHEN 16 then 'Auto disinfect' WHEN 8 then 'Ask me later' WHEN 1 then 'Terminate application' WHEN 2 then 'Suspended' WHEN 4 then 'Trust this application and never ask again' ELSE '---' END", "type": "string"},
+			
+			
 			{ "caption": "Current Client Description", "fieldName": "clients.description", "type": "string" },
 			{ "caption": "Current IP Address", "fieldName": "lastIpAddress", "sql": "remoteAddress(clients.lastIpAddress, -1)", "type": "string" },
 			{ "caption": "Current User Name", "fieldName": "clients.userName", "type": "string" },
@@ -90,7 +108,9 @@
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
-				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" }
+				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
+				{ "caption": "User Action", "fieldRef": "userAction"}
+				
 			],
 			"summary": [
 				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
@@ -106,12 +126,13 @@
 		},
 		{
 			"name":"Most Detected Type",
-			"description":"Shows the detail and summary of most detected type Tamper, Bait, DataCop, MBR",
+			"description":"Shows the detail and summary of most detected type",
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
-				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" }
+				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
+				{ "caption": "Event", "fieldRef": "event"},
 			],
 			"summary": [
 				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
@@ -132,7 +153,13 @@
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
-				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" }
+				{ "caption": "Application", "fieldRef": "app"},
+				{ "caption": "Application User", "fieldRef": "appUser"},
+				{ "caption": "Event", "fieldRef": "event"},
+				{ "caption": "Pid", "fieldRef": "pid"},
+				{ "caption": "Target", "fieldRef": "target"},
+				{ "caption": "Target Type", "fieldRef": "targetType"}
+				
 			],
 			"summary": [
 				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
