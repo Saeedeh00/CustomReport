@@ -90,22 +90,24 @@
 	"default": [
 		{
 			"name":"The Client With Most UMP Report",
-			"description":"Shows the detail and summary of most client with most UMP report",
+			"description":"Shows the detail and summary of client with most UMP report",
 			"detail": [
-				{ "caption": "Computer Name", "fieldRef": "clients.computerName", "sort": "asc"},
-				{ "caption": "Group Name", "fieldRef": "groups.name"},
-				{ "caption": "Last IP Address", "fieldRef": "lastIpAddress"},
-				{ "caption": "Last Blocked Application", "fieldRef": "reports.w3", "filter": { "type": "contain", "value": "I:\" }}
+				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
+				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
+				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
+				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
+				{ "caption": "Blocked Application", "fieldRef": "reports.w3", "filter": { "type": "contain", "value": "I:\" }},
+				{ "caption": "Application User", "fieldRef": "reports.w1"},
+				{ "caption": "Application Path", "fieldRef": "reports.w2"}
 			],
-			"summary": [				
-				{  "caption": "Last IP Address", "fieldRef": "lastIpAddress", "function": "groupby"},
-				{ "caption": "Number of clients", "detailFieldRef": "clients.computerName", "function": "countDistinct", "sort": "desc" }
-				
+			"summary": [					
+				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" },
+				{ "caption": "Client Count", "function": "countStar", "sort": "desc" }	
 			],
 			"chart" : {
 				"title" : "Involved Clients (UMP)",
 				"type" : "pie",
-				"seriesList" : ["clients.computerName"],
+				"seriesList" : ["Client Count"]
 			}
 		},
 		{
@@ -123,19 +125,18 @@
 				
 			],
 			"summary": [
-				{  "caption": "Last IP Address", "fieldRef": "lastIpAddress", "function": "groupby"},
+				{ "caption": "Last IP Address", "fieldRef": "lastIpAddress", "function": "groupby"},
 				{ "caption": "Number of Blocked clients", "detailFieldRef": "clients.computerName", "function": "countDistinct", "sort": "desc" }
 				
 			],
 			"chart" : {
-
 				"title" : "Client With Most Blocked Application",
 				"type" : "pie",
-				"seriesList" : ["Count"]
+				"seriesList" : ["Number of Blocked clients"]
 			}
 		},
 		{
-			"name":" Most Blocked UMP Application",
+			"name":"Most Blocked UMP Application",
 			"description":"Shows the detail and summary of most reported UMP applications",
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
@@ -144,8 +145,7 @@
 				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
 				{ "caption": "Blocked Application", "fieldRef": "reports.w3", "filter": { "type": "contain", "value": "I:\" }},
 				{ "caption": "Application User", "fieldRef": "reports.w1"},
-				{ "caption": "Application Path", "fieldRef": "reports.w2"}
-				
+				{ "caption": "Application Path", "fieldRef": "reports.w2"}	
 			],
 			"summary": [
 				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" }
@@ -156,7 +156,7 @@
 			"chart" : {
 				"title": "Blocked Times",
 				"type": "pie",
-				"seriesList": [ "Blocked Times" ]
+				"seriesList": ["Blocked Times"]
 			}
 		},
 		{
@@ -180,8 +180,7 @@
 				"title" : "Most Blocked Application",
 				"type" : "pie",
 				"seriesList" : ["Client Count"]
-			},
-			"dateDefault": 90
+			}
 		}
 	],
     "filter":
