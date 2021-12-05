@@ -105,18 +105,16 @@
 				{ "caption": "Remote Address", "fieldRef": "remoteAddress"},
 				{ "caption": "Detection Name", "fieldRef": "reports.w1"}				
 			],
-			"summary": [
-				{ "caption": "Number of Blocked sites", "function": "countStar", "sort": "desc" },
-				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
+			"summary": [		
+				{ "caption": "Host Name", "detailFieldRef": "reports.w2", "function": "groupby" },
+				{ "caption": "Sites Count","function": "countStar", "sort": "desc" }
+				
 			],
 			"chart":{
 			  "title":"Most visited sites",
 			  "type":"pie",
-			  "seriesList":[
-				"Number of Visited sites"
-			  ]
+			  "seriesList":["Visited Times"]
 			},
-			"dateDefault": 90
 		},
 		{
 			"name":"Most Blocked Sites",
@@ -128,18 +126,18 @@
 				{ "caption": "Host Name", "fieldRef": "reports.w2"},
 				{ "caption": "Remote Address", "fieldRef": "remoteAddress"}
 			],
-			"summary": [
-				{ "caption": "Number of Blocked Sites", "function": "countStar", "sort": "desc" },
-				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
+			"summary": [		
+				{ "caption": "Host Name", "detailFieldRef": "deviceName", "function": "groupby"},
+				{ "caption": "Blocked Times", "function": "countStar", "sort": "desc" }
+				
 			],
 			"chart":{
 			  "title":"Most Blocked Sites",
 			  "type":"pie",
 			  "seriesList":[
-				"Number of Blocked sites"
+				"Blocked Times"
 			  ]
-			},
-			"dateDefault": 90
+			}
 		}
 	],
     "filter":
