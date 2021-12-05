@@ -127,7 +127,7 @@
 				{ "caption": "Remote Address", "fieldRef": "remoteAddress"}
 			],
 			"summary": [		
-				{ "caption": "Host Name", "detailFieldRef": "deviceName", "function": "groupby"},
+				{ "caption": "Host Name", "detailFieldRef": "reports.w2", "function": "groupby"},
 				{ "caption": "Blocked Times", "function": "countStar", "sort": "desc" }
 				
 			],

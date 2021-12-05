@@ -109,18 +109,16 @@
 				{ "caption": "Direction", "fieldRef": "reports.i5" },
 				{ "caption": "Local Port", "fieldRef": "localPort"}
 			],
-			"summary": [
-				{ "caption": "Number of Blocked IP", "function": "countStar", "sort": "desc" },
-				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
+			"summary": [				
+				{ "caption": "Remote Address", "detailFieldRef": "remoteAddress", "function": "groupby"},
+				{ "caption": "Blocked Times", "function": "countStar", "sort": "desc" }
+				
 			],
 			"chart":{
-			  "title":"Attack Distribution",
+			  "title":"Blocked IP",
 			  "type":"pie",
-			  "seriesList":[
-				"Number of Blocked IP"
-			  ]
-			},
-			"dateDefault": 90
+			  "seriesList":["Blocked Times"]
+			}
 		},
 		{
 			"name":"Most Blocked Application",
@@ -134,17 +132,15 @@
 				{ "caption": "Application User", "fieldRef": "appUser"}
 			],
 			"summary": [
-				{ "caption": "Number of Blocked Application", "function": "countStar", "sort": "desc" },
-				{ "caption": "Last Blocked", "detailFieldRef": "reports.date", "function": "max" }
+			
+				{ "caption": "Application Name", "detailFieldRef": "appName", "function": "groupby"},
+				{ "caption": "Blocked Times", "function": "countStar", "sort": "desc" }
 			],
 			"chart":{
-			  "title":"Firewall Blocked",
+			  "title":"Blocked Application",
 			  "type":"pie",
-			  "seriesList":[
-				"Number of Blocked Application"
-			  ]
-			},
-			"dateDefault": 90
+			  "seriesList":["Blocked Times"]
+			}
 		}
 	],
     "filter":
