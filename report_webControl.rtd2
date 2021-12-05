@@ -107,7 +107,7 @@
 			],
 			"summary": [		
 				{ "caption": "Host Name", "detailFieldRef": "reports.w2", "function": "groupby" },
-				{ "caption": "Sites Count","function": "countStar", "sort": "desc" }
+				{ "caption": "Visited Times","function": "countStar", "sort": "desc" }
 				
 			],
 			"chart":{

@@ -111,20 +111,17 @@
 				{ "caption": "Report Time IP Address", "fieldRef": "reportIp" },
 				{ "caption": "Report Time Console User Name", "fieldRef": "reports.consoleUsername" },
 				{ "caption": "Computer Name", "fieldRef": "clients.computerName", "sort": "asc"},
-				{ "caption": "User Action", "fieldRef": "userAction"}
-				
+				{ "caption": "User Action", "fieldRef": "userAction"}	
 			],
 			
 			"summary": [
-				{ "caption": "Last IP Address", "fieldRef": "lastIpAddress", "function": "groupby"},
-				{ "caption": "Client Count", "detailFieldRef": "clients.computerName", "function": "countDistinct", "sort": "desc" }
-				
+				{ "caption": "Report Time Client Name", "detailFieldRef": "reportComputerName", "function": "groupby" },
+				{ "caption": "Involved Client Count","function": "countStar", "sort": "desc" }		
 			],
 			"chart" : {
-
 				"title" : "Involved Clients",
 				"type" : "pie",
-				"seriesList" : ["Count"]
+				"seriesList" : ["Involved Client Count"]
 			}
 		},
 		{
@@ -141,21 +138,17 @@
 			],
 			"summary": [
 				{ "caption": "Event Nmae", "detailFieldRef": "event", "function": "groupby" },
-				{ "caption": "Client Count","function": "countStar", "sort": "desc" }
+				{ "caption": "Detection Type Count","function": "countStar", "sort": "desc" }
 			],
 			"chart" : {
-				"seriesList" : [
-					"Type Count"
-				],
-				"title" : "Most Detected Type",
+				"seriesList" : ["Detection Type Count"],
+				"title" : "Most Detection Type",
 				"type" : "pie"
 			}
-			
-			
 		},
 		{
-			"name":"Most Blocked Appllication",
-			"description":"Shows the detail and summary of most blocked sites by Anticrypto",
+			"name":"Most Blocked Application",
+			"description":"Shows the detail and summary of most blocked Application by Anticrypto",
 			"detail": [
 				{ "caption": "Report Time", "fieldRef": "reports.date", "sort": "desc" },
 				{ "caption": "Report Time Client Name", "fieldRef": "reportComputerName" },
@@ -171,13 +164,13 @@
 			
 				"summary": [
 				{ "caption": "Blocked Application", "detailFieldRef": "app", "function": "groupby" },
-				{ "caption": "Client Count","function": "countStar", "sort": "desc" }
+				{ "caption": "Application Count","function": "countStar", "sort": "desc" }
 			],
 	
 			"chart" : {
 				"title" : "Most Blocked Application",
 				"type" : "pie",
-				"seriesList" : ["Client Count"]
+				"seriesList" : ["Application Count"]
 			},
 		}
 	],
